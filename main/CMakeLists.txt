@@ -1,0 +1,18 @@
+idf_component_register(
+    SRCS 
+        "main.c"
+        "router.c"
+        "translator.c"
+        "handlers/pedal_handler.c"
+        "handlers/button_handler.c"
+        "handlers/debug_handler.c"
+        "hardware/pedal.c"
+        "hardware/pump.c"
+        "hardware/valve.c"
+        "hardware/regulator.c"
+        "hardware/buttons.c"
+        "hardware/hardware_task.c"
+    INCLUDE_DIRS 
+        ""
+)
+
