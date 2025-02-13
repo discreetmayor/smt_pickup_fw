@@ -1,11 +1,11 @@
 #ifndef _HARDWARE_TASK_H_
 #define _HARDWARE_TASK_H_
 
-#include "freertos/FreeRTOS.h"
-#include "freertos/task.h"
-#include "freertos/queue.h"
-#include "driver/gpio.h"
-#include "esp_err.h"
+#include <freertos/FreeRTOS.h>
+#include <freertos/task.h>
+#include <freertos/queue.h>
+#include <driver/gpio.h>
+#include <esp_err.h>
 
 typedef struct {
     uint32_t task_stack_size;
