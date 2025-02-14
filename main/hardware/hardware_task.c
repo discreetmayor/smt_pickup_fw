@@ -5,6 +5,7 @@
 #include <esp_err.h>
 #include <esp_log.h>
 #include <esp_check.h>
+#include <stdio.h>
 #include "hardware_task.h"
 #include "../system_events.h"
 

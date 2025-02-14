@@ -25,6 +25,8 @@ static void translator_task(void *arg) {
             } else {
                 ESP_LOGW(tag, "No handler for event type %d", event.type);
             }
+        } else {
+            ESP_LOGE(tag, "Dropped Queue Message");
         }
     }
 }

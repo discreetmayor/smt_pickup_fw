@@ -21,9 +21,11 @@ static QueueHandle_t valve_queue_handle = NULL;
 static void valve_task(void *arg) {
     system_event_t event;
     while(1) {
-        if(xQueueReceive(valve_queue_handle, &event, portMAX_DELAY)) {
+        if(xQueueReceive(valve_queue_handle, &event, portMAX_DELAY) == pdTRUE) {
             gpio_set_level(VALVE_IO, event.payload.valve.closed);
             ESP_LOGI(tag, "%s", event.payload.valve.closed ? "CLOSED" : "OPEN");
+        } else {
+            ESP_LOGE(tag, "Dropped Queue Message");
         }
     }
 }

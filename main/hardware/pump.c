@@ -81,7 +81,7 @@ static esp_err_t init_timer(uint32_t uSec) {
 static void pump_task(void *arg) {
     system_event_t event;
     while (1) {
-        if(xQueueReceive(pump_queue_handle, &event, portMAX_DELAY)) {
+        if(xQueueReceive(pump_queue_handle, &event, portMAX_DELAY) == pdTRUE) {
             switch(event.payload.pump.state) {
                 case PUMP_ON:
                     reset_timer();
@@ -97,6 +97,8 @@ static void pump_task(void *arg) {
                     }
                     break;
             }
+        } else {
+            ESP_LOGE(tag, "Dropped Queue Message");
         }
     }
 }

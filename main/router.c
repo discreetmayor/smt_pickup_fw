@@ -13,7 +13,7 @@ typedef struct {
     event_type_t type;
     QueueHandle_t queue;
 } router_subscription_t;
-static const char *tag = "PUBLISHER";
+static const char *tag = "ROUTER";
 static router_subscription_t subscribers[MAX_SUBSCRIBERS];
 static size_t subscriber_count = 0;
 
@@ -60,7 +60,8 @@ void router_publish(const system_event_t *event) {
         return;
     }
     for (size_t i = 0; i < subscriber_count; i++) {
-        if (subscribers[i].type == event->type) {
+        if (subscribers[i].type == event->type
+            || subscribers[i].type == EVENT_TYPE_ANY) {
             xQueueSend(subscribers[i].queue, event, (TickType_t)0);
         }
     }

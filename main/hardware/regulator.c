@@ -36,7 +36,8 @@ static void regulator_disable() {
 static void regulator_task(void *arg) {
     system_event_t event;
     while(1) {
-        if(xQueueReceive(regulator_queue_handle, &event, portMAX_DELAY)) {
+        if(xQueueReceive(regulator_queue_handle, &event, portMAX_DELAY)
+            == pdTRUE) {
             switch(event.payload.regulator.state) {
                 case REGULATOR_TOGGLE:
                     if(enabled) {
@@ -56,6 +57,8 @@ static void regulator_task(void *arg) {
                     }
                     break;
             }
+        } else {
+            ESP_LOGE(tag, "Dropped Queue Message");
         }
     }
 }
