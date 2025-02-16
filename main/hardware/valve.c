@@ -32,11 +32,11 @@ static void valve_task(void *arg) {
 
 esp_err_t valve_init() {
     hardware_config_t config = {
+        .log_tag = tag,
         .task_stack_size = VALVE_TASK_STACK_SIZE,
         .task_priority = VALVE_TASK_PRIORITY,
-        .io_pin = VALVE_IO,
-        .io_mode = GPIO_MODE_OUTPUT,
-        .log_tag = tag
+        .io_config.pin_bit_mask = 1 << VALVE_IO,
+        .io_config.pull_up_en = 1
     };
     ESP_ERROR_CHECK(
         hardware_task_init(&config, valve_task, &valve_queue_handle)

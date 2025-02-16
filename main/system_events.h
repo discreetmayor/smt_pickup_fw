@@ -1,6 +1,8 @@
 #ifndef _SYSTEM_EVENTS_H_
 #define _SYSTEM_EVENTS_H_
 
+#include <stdbool.h>
+
 #define NUM_EVENT_TYPES 6
 
 /*******************************************************************************
@@ -14,6 +16,14 @@ typedef enum {
     EVENT_TYPE_REGULATOR,
     EVENT_TYPE_ANY
 } event_type_t;
+
+typedef struct {
+    event_type_t type;
+    const char *name;
+} event_type_name_t;
+
+extern const event_type_name_t event_type_names[];
+const char* get_event_type_name(event_type_t type);
 
 /*******************************************************************************
  * Buttons
@@ -33,7 +43,10 @@ typedef enum {
 
 typedef enum {
     PUMP_OFF,
-    PUMP_ON
+    PUMP_ON,
+    // PUMP_RESET_TIMER,
+    PUMP_START_TIMER,
+    PUMP_STOP_TIMER
 } pump_state_t;
 
 /*******************************************************************************
@@ -76,6 +89,7 @@ typedef struct {
  ******************************************************************************/
 typedef struct {
     event_type_t type;
+    event_type_t original_type;
     union {
         button_event_payload_t button;
         pedal_event_payload_t pedal;

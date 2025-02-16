@@ -5,7 +5,6 @@
 #include <esp_log.h>
 #include <esp_err.h>
 #include <esp_check.h>
-
 #include "system_events.h"
 #include "router.h"
 #include "translator.h"
@@ -14,13 +13,11 @@
 #include "hardware/valve.h"
 #include "hardware/regulator.h"
 #include "hardware/buttons.h"
-
 #include "handlers/pedal_handler.h"
 #include "handlers/button_handler.h"
 #include "handlers/debug_handler.h"
 
 static esp_err_t init() {
-
     ESP_ERROR_CHECK(gpio_install_isr_service(0));
 
     //subscribers
@@ -43,20 +40,17 @@ void app_main(void) {
 
         //handlers
         translator_add_handler(EVENT_TYPE_PEDAL, handle_pedal_event);
-        translator_add_handler(EVENT_TYPE_BUTTON, handle_button_event);
-        translator_add_handler(EVENT_TYPE_ANY, handle_debug_event);
+        //translator_add_handler(EVENT_TYPE_BUTTON, handle_button_event);
+        //translator_add_handler(EVENT_TYPE_ANY, handle_debug_event);
         
-        // system_event_t test = {
-        //     .type = EVENT_TYPE_PEDAL
-        // };
-        // int i = 0;
-        // while(1) {
-        //     test.payload.pedal.released = i % 2;
-        //     ESP_LOGI("MAIN", "%s", i % 2 ? "RELEASED" : "PRESSED");
-        //     i++;
-        //     router_publish(&test);
-        //     vTaskDelay(35000 / portTICK_PERIOD_MS);
-            
-        // }
+        system_event_t forward_event = {
+            .type = EVENT_TYPE_REGULATOR,
+            .payload.regulator.state = REGULATOR_ON
+        };
+        router_publish(&forward_event);
+
+        while(1) {
+            vTaskDelay(10000 / portTICK_PERIOD_MS);
+        }
     }
 }

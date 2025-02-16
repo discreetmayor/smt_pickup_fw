@@ -14,8 +14,14 @@ void handle_pedal_event(const system_event_t *event) {
     router_publish(&forward_event);
 
     forward_event.type = EVENT_TYPE_PUMP;
+    // pedal is pressed
     if(!event->payload.pedal.released) {
         forward_event.payload.pump.state = PUMP_ON;
+        router_publish(&forward_event);
+        forward_event.payload.pump.state = PUMP_STOP_TIMER;
+        router_publish(&forward_event);
+    } else {
+        forward_event.payload.pump.state = PUMP_START_TIMER;
         router_publish(&forward_event);
     }
 }

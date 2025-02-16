@@ -3,7 +3,7 @@
 #include "button_handler.h"
 
 static void handle_power_button(const system_event_t *event) {
-    system_event_t forward_event = {
+    const system_event_t forward_event = {
         .type = EVENT_TYPE_REGULATOR,
         .payload.regulator.state = REGULATOR_TOGGLE
     };

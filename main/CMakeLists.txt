@@ -3,6 +3,7 @@ idf_component_register(
         "main.c"
         "router.c"
         "translator.c"
+        "system_events.c"
         "handlers/pedal_handler.c"
         "handlers/button_handler.c"
         "handlers/debug_handler.c"

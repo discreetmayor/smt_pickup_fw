@@ -24,13 +24,13 @@ static QueueHandle_t pump_queue_handle = NULL;
 static bool enabled = false;
 
 static void pump_start() {
-    ESP_LOGI(tag, "Started");
+    ESP_LOGI(tag, "Start");
     gpio_set_level(PUMP_IO, PUMP_ENABLE);
     enabled = true;
 }
 
 static void pump_stop() {
-    ESP_LOGI(tag, "Stopped");
+    ESP_LOGI(tag, "Stop");
     gpio_set_level(PUMP_IO, PUMP_DISABLE);
     enabled = false;
 }
@@ -38,6 +38,29 @@ static void pump_stop() {
 static void reset_timer() {
     ESP_LOGI(tag, "Timer reset");
     gptimer_set_raw_count(timer, 0); 
+}
+
+static void start_timer() {
+    ESP_LOGI(tag, "Timer start");
+    reset_timer();
+    gptimer_start(timer);
+    
+}
+
+static void stop_timer() {
+    ESP_LOGI(tag, "Timer stop");
+    gptimer_stop(timer);
+}
+
+static bool timer_end(gptimer_handle_t timer, 
+    const gptimer_alarm_event_data_t *data, 
+    void *ctx) {
+    system_event_t event = {
+        .type = EVENT_TYPE_PUMP,
+        .payload.pump = { .state = PUMP_OFF }
+    };
+    router_publish(&event);
+    return true;
 }
 
 static esp_err_t init_timer(uint32_t uSec) {
@@ -84,17 +107,20 @@ static void pump_task(void *arg) {
         if(xQueueReceive(pump_queue_handle, &event, portMAX_DELAY) == pdTRUE) {
             switch(event.payload.pump.state) {
                 case PUMP_ON:
-                    reset_timer();
                     if(!enabled) {
                         pump_start();
-                        gptimer_start(timer);
                     }
                     break;
                 case PUMP_OFF:
                     if(enabled) {
-                        gptimer_stop(timer);
                         pump_stop();
                     }
+                    break;
+                case PUMP_START_TIMER:
+                    start_timer();
+                    break;
+                case PUMP_STOP_TIMER:
+                    stop_timer();
                     break;
             }
         } else {
@@ -103,24 +129,14 @@ static void pump_task(void *arg) {
     }
 }
 
-bool timer_end(gptimer_handle_t timer, 
-    const gptimer_alarm_event_data_t *data, 
-    void *ctx) {
-    const system_event_t event = {
-        .type = EVENT_TYPE_PUMP,
-        .payload.pump = { .state = PUMP_OFF }
-    };
-    router_publish(&event);
-    return true;
-}
 
 esp_err_t pump_init() {
     hardware_config_t config = {
+        .log_tag = tag,
         .task_stack_size = PUMP_TASK_STACK_SIZE,
         .task_priority = PUMP_TASK_PRIORITY,
-        .io_pin = PUMP_IO,
-        .io_mode = GPIO_MODE_OUTPUT,
-        .log_tag = tag
+        .io_config.pin_bit_mask = 1 << PUMP_IO,
+        .io_config.pull_up_en = 1
     };
     ESP_ERROR_CHECK(hardware_task_init(&config, pump_task, &pump_queue_handle));
     ESP_ERROR_CHECK(init_timer(PUMP_TIMEOUT_US));
@@ -128,6 +144,8 @@ esp_err_t pump_init() {
         router_subscribe(EVENT_TYPE_PUMP, pump_queue_handle), 
         tag, 
         "Failed to subscribe");
+
+    start_timer();
     ESP_LOGI(tag, "Initialized");
 
     return ESP_OK;

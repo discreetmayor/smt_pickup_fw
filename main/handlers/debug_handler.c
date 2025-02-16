@@ -4,5 +4,9 @@
 #include "debug_handler.h"
 
 void handle_debug_event(const system_event_t *event) {
-    ESP_LOGI("DEBUG", "Received debug event with type: %d", event->type);
+    ESP_LOGI(
+        "DEBUG", 
+        "Received %s", 
+        get_event_type_name(event->original_type)
+    );
 }

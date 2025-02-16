@@ -65,11 +65,11 @@ static void regulator_task(void *arg) {
 
 esp_err_t regulator_init() {
     hardware_config_t config = {
+        .log_tag = tag,
         .task_stack_size = REGULATOR_TASK_STACK_SIZE,
         .task_priority = REGULATOR_TASK_PRIORITY,
-        .io_pin = REGULATOR_IO,
-        .io_mode = GPIO_MODE_OUTPUT,
-        .log_tag = tag
+        .io_config.pin_bit_mask = 1 << REGULATOR_IO,
+        .io_config.pull_down_en = 1
     };
     ESP_ERROR_CHECK(
         hardware_task_init(&config, regulator_task, &regulator_queue_handle)

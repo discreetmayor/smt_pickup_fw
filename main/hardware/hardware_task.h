@@ -8,11 +8,12 @@
 #include <esp_err.h>
 
 typedef struct {
+    const char *log_tag;
     uint32_t task_stack_size;
     UBaseType_t task_priority;
-    gpio_num_t io_pin;
-    gpio_mode_t io_mode;
-    const char *log_tag;
+    union {
+        gpio_config_t io_config;
+    };
 } hardware_config_t;
 
 esp_err_t hardware_task_init(
@@ -20,6 +21,5 @@ esp_err_t hardware_task_init(
     TaskFunction_t task_function, 
     QueueHandle_t *queue
 );
-esp_err_t hardware_io_init(hardware_config_t *config);
 
 #endif
