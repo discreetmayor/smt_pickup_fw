@@ -1,6 +1,7 @@
 #ifndef _SYSTEM_EVENTS_H_
 #define _SYSTEM_EVENTS_H_
 
+#include <stdint.h>
 #include <stdbool.h>
 
 #define NUM_EVENT_TYPES 6
@@ -44,9 +45,7 @@ typedef enum {
 typedef enum {
     PUMP_OFF,
     PUMP_ON,
-    // PUMP_RESET_TIMER,
-    PUMP_START_TIMER,
-    PUMP_STOP_TIMER
+    PUMP_SET_LEVEL
 } pump_state_t;
 
 /*******************************************************************************
@@ -77,6 +76,7 @@ typedef struct {
 } valve_command_payload_t;
 
 typedef struct {
+    uint8_t level;
     pump_state_t state;
 } pump_command_payload_t;
 

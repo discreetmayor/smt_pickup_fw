@@ -1,3 +1,4 @@
+#include <esp_log.h>
 #include "../router.h"
 #include "../system_events.h"
 #include "pedal_handler.h"
@@ -18,10 +19,9 @@ void handle_pedal_event(const system_event_t *event) {
     if(!event->payload.pedal.released) {
         forward_event.payload.pump.state = PUMP_ON;
         router_publish(&forward_event);
-        forward_event.payload.pump.state = PUMP_STOP_TIMER;
-        router_publish(&forward_event);
+
     } else {
-        forward_event.payload.pump.state = PUMP_START_TIMER;
+        forward_event.payload.pump.state = PUMP_OFF;
         router_publish(&forward_event);
     }
 }

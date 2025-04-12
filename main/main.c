@@ -43,11 +43,11 @@ void app_main(void) {
         //translator_add_handler(EVENT_TYPE_BUTTON, handle_button_event);
         //translator_add_handler(EVENT_TYPE_ANY, handle_debug_event);
         
-        system_event_t forward_event = {
-            .type = EVENT_TYPE_REGULATOR,
-            .payload.regulator.state = REGULATOR_ON
-        };
-        router_publish(&forward_event);
+        // system_event_t forward_event = {
+        //     .type = EVENT_TYPE_REGULATOR,
+        //     .payload.regulator.state = REGULATOR_ON
+        // };
+        // router_publish(&forward_event);
 
         while(1) {
             vTaskDelay(10000 / portTICK_PERIOD_MS);
